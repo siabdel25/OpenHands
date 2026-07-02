@@ -47,6 +47,10 @@ DEFAULT_PROFILE = "deepseek"
 # Ordre de repli en cas d'échec (429, timeout, connexion) du profil choisi.
 FALLBACK_CHAIN = ["deepseek", "GML-5", "claude", "gemini", "gemma4", "openrouter_z-ai_glm-4.7-flash"]
 
+# Profils autorisés pour les tâches confidentielles : locaux uniquement.
+# Une tâche confidentielle ne doit JAMAIS être rejouée sur un profil cloud.
+LOCAL_PROFILES = {"gemma4", "qwen_local"}
+
 START_TASK_TERMINAL = {"READY", "ERROR"}
 EXECUTION_TERMINAL = {"finished", "error", "stuck"}
 
@@ -170,7 +174,11 @@ def wait_for_result(base_url: str, conversation_id: str, timeout: float) -> None
 def route(base_url: str, task: str, repo: str | None, branch: str | None,
           dry_run: bool, wait: bool, wait_timeout: float) -> None:
     profile = pick_profile(task)
-    chain = [profile] + [p for p in FALLBACK_CHAIN if p != profile]
+    if profile == CONFIDENTIAL_PROFILE:
+        # Tâche confidentielle : repli limité aux profils locaux, jamais le cloud.
+        chain = [profile] + [p for p in FALLBACK_CHAIN if p in LOCAL_PROFILES and p != profile]
+    else:
+        chain = [profile] + [p for p in FALLBACK_CHAIN if p != profile]
 
     print(f"Profil choisi (règle): {profile}")
     if dry_run:
