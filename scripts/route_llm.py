@@ -35,11 +35,11 @@ COMPLEX_KEYWORDS = [
 
 # Profils réellement définis dans /.openhands/settings.json (GET /api/v1/settings/profiles).
 CONFIDENTIAL_PROFILE = "gemma4"
-COMPLEX_PROFILE = "GML-5"
+COMPLEX_PROFILE = "claude"
 DEFAULT_PROFILE = "deepseek"
 
 # Ordre de repli en cas d'échec (429, timeout, connexion) du profil choisi.
-FALLBACK_CHAIN = ["deepseek", "GML-5", "gemma4", "openrouter_z-ai_glm-4.7-flash"]
+FALLBACK_CHAIN = ["deepseek", "GML-5", "claude", "gemini", "gemma4", "openrouter_z-ai_glm-4.7-flash"]
 
 
 def pick_profile(task: str) -> str:
