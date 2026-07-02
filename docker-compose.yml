@@ -11,6 +11,8 @@ services:
       - AGENT_SERVER_IMAGE_TAG=${AGENT_SERVER_IMAGE_TAG:-1.30.0-python}
       #- SANDBOX_USER_ID=${SANDBOX_USER_ID:-1234} # enable this only if you want a specific non-root sandbox user but you will have to manually adjust permissions of ~/.openhands for this user
       - WORKSPACE_MOUNT_PATH=${WORKSPACE_BASE:-$PWD/workspace}
+      # off par défaut : le bouton Automations pointe vers /automations, route absente du frontend (404)
+      - ENABLE_AUTOMATIONS=${ENABLE_AUTOMATIONS:-false}
     ports:
       - "3000:3000"
     extra_hosts:
@@ -19,6 +21,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/.openhands:/.openhands
       - ${WORKSPACE_BASE:-$PWD/workspace}:/opt/workspace_base
-    pull_policy: build
+    pull_policy: if_not_present
     stdin_open: true
     tty: true
